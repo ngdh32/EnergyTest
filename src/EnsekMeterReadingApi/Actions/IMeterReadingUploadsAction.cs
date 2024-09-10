@@ -4,5 +4,5 @@ namespace EnsekMeterReadingApi.Actions;
 
 public interface IMeterReadingUploadsAction
 {
-    public Task RunAsync();
+    public Task RunAsync(Stream stream, CancellationToken cancellationToken = default);
 }
