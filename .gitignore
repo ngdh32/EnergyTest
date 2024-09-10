@@ -1,0 +1,10 @@
+test/EnsekMeterReadingApiTest/bin/
+test/EnsekMeterReadingApiTest/obj/
+src/EnsekMeterReadingApi/bin/
+src/EnsekMeterReadingApi/obj/
+src/EnsekMeterReadingCore/bin/
+src/EnsekMeterReadingCore/obj/
+src/EnsekMeterReadingInfra/bin/
+src/EnsekMeterReadingInfra/obj/
+
+.vscode/
