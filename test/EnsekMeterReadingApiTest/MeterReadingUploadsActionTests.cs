@@ -1,4 +1,5 @@
-using EnsekMeterReadingApi.Actions;
+using EnsekMeterReadingCore.Actions;
+using EnsekMeterReadingCore.Helpers;
 using Moq;
 
 namespace EnsekMeterReadingApiTest;
@@ -8,7 +9,7 @@ public class MeterReadingUploadsActionTests
     private readonly IMeterReadingUploadsAction _testee;
 
     public MeterReadingUploadsActionTests(){
-        _testee = new MeterReadingUploadsAction();
+        _testee = new MeterReadingUploadsAction(new MeterReadingUploadCsvParser());
     }
 
     [Fact]
@@ -16,13 +17,11 @@ public class MeterReadingUploadsActionTests
     {
         // Arrange
         using var fileStream = new FileStream("TestData/Meter_Reading.csv", FileMode.Open, FileAccess.Read);
-        using var reader = new StreamReader(fileStream);
-        var text = await reader.ReadToEndAsync();
 
         // Act
-        await _testee.RunAsync(fileStream);
+        var result = await _testee.RunAsync(fileStream);
 
         // Assert
-        
+        Assert.Equal(35, result);
     }
 }

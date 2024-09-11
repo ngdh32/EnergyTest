@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EnsekMeterReadingApi\EnsekMeterReadingApi.csproj" />
+    <ProjectReference Include="..\..\src\EnsekMeterReadingCore\EnsekMeterReadingCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

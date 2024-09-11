@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Actions/Implementations/" />
+    <ProjectReference Include="..\EnsekMeterReadingCore\EnsekMeterReadingCore.csproj" />
   </ItemGroup>
 
 </Project>

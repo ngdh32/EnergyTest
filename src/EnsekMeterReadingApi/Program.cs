@@ -1,4 +1,4 @@
-using EnsekMeterReadingApi.Actions;
+using EnsekMeterReadingCore.Actions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IMeterReadingUploadsAction, MeterReadingUploadsAction>();
@@ -16,9 +16,9 @@ app.MapPost("/meter-reading-uploads", async (IMeterReadingUploadsAction action, 
     var file = form.Files.First();
 
     using var fileStream = file.OpenReadStream();
-    await action.RunAsync(fileStream);
+    var result = await action.RunAsync(fileStream);
 
-    return Results.Ok();
+    return Results.Ok(result);
 });
 
 app.Run();
