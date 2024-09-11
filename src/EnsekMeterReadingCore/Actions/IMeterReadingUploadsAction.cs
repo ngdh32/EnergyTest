@@ -1,8 +1,9 @@
 using System;
+using EnsekMeterReadingCore.Models;
 
 namespace EnsekMeterReadingCore.Actions;
 
 public interface IMeterReadingUploadsAction
 {
-    public Task<int> RunAsync(Stream stream, CancellationToken cancellationToken = default);
+    public Task<MeterReadingUploadsActionResult> RunAsync(Stream stream, CancellationToken cancellationToken = default);
 }

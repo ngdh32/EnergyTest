@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using EnsekMeterReadingCore.Helpers;
+using EnsekMeterReadingCore.Models;
 using EnsekMeterReadingCore.Repositories;
 
 namespace EnsekMeterReadingCore.Actions;
@@ -18,31 +19,41 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
         _meterReadingRepository = meterReadingRepository;
     }
 
-    public async Task<int> RunAsync(Stream stream, CancellationToken cancellationToken = default)
+    public async Task<MeterReadingUploadsActionResult> RunAsync(Stream stream, CancellationToken cancellationToken = default)
     {
-        var successfulReadCount = 0;
+        var successCount = 0;
+        var failedCount = 0;
 
         using var reader = new StreamReader(stream);
         var lineText = string.Empty;
 
         while((lineText = await reader.ReadLineAsync(cancellationToken)) != null)
         {
-            var record = _csvParser.GetMeterReadingFromLine(lineText);
-            if (record == null)
+            try 
             {
-                continue;
-            }
+                var record = _csvParser.GetMeterReadingFromLine(lineText);
+                if (record == null)
+                {
+                    failedCount++;
+                    continue;
+                }
 
-            var account = await _accountRepository.GetByIdAsync(record.AccountId);
-            if (account == null)
+                var account = await _accountRepository.GetByIdAsync(record.AccountId);
+                if (account == null)
+                {
+                    failedCount++;
+                    continue;
+                }
+
+                await _meterReadingRepository.AddAsync(record);
+                successCount++;
+            } 
+            catch(Exception ex)
             {
-                continue;
+                failedCount++;
             }
-
-            await _meterReadingRepository.AddAsync(record);
-            successfulReadCount++;
         }
 
-        return successfulReadCount;
+        return new MeterReadingUploadsActionResult(successCount, failedCount);
     }
 }

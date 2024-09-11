@@ -33,7 +33,9 @@ public class MeterReadingUploadsActionTests
         var result = await _testee.RunAsync(fileStream);
 
         // Assert
-        Assert.Equal(35, result);
+        Assert.NotNull(result);
+        Assert.Equal(35, result.successCount);
+        Assert.Equal(0, result.failedCount);
     }
     
 
@@ -55,6 +57,8 @@ public class MeterReadingUploadsActionTests
         var result = await _testee.RunAsync(fileStream);
 
         // Assert
-        Assert.Equal(32, result);
+        Assert.NotNull(result);
+        Assert.Equal(32, result.successCount);
+        Assert.Equal(3, result.failedCount);
     }
 }

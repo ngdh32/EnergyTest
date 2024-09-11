@@ -9,8 +9,7 @@ If returning the number is not necessary, what we can do is create an endpoint i
 Database connection:
 Put it in the AWS secret manager. If we are using AWS RDS with read replica enabled, we can have 2 different connection string. One is for read/write and one is for read only so as to ease the loading. 
 
-
-
+In MeterReadingUploadsAction.cs, may consider having in memroy dictionary so that we dont have to access to the database every line
 
 Questions:
 1. What is the x in the line 29 in the Meter_Reading.csv? Why is there a missing column?
