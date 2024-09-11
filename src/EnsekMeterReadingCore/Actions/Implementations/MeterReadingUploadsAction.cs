@@ -1,16 +1,21 @@
 using System;
 using System.Globalization;
 using EnsekMeterReadingCore.Helpers;
+using EnsekMeterReadingCore.Repositories;
 
 namespace EnsekMeterReadingCore.Actions;
 
 public class MeterReadingUploadsAction : IMeterReadingUploadsAction
 {
     private readonly IMeterReadingUploadCsvParser _csvParser;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IMeterReadingRepository _meterReadingRepository;
 
-    public MeterReadingUploadsAction(IMeterReadingUploadCsvParser csvParser)
+    public MeterReadingUploadsAction(IMeterReadingUploadCsvParser csvParser, IAccountRepository accountRepository, IMeterReadingRepository meterReadingRepository)
     {
         _csvParser = csvParser;
+        _accountRepository = accountRepository;
+        _meterReadingRepository = meterReadingRepository;
     }
 
     public async Task<int> RunAsync(Stream stream, CancellationToken cancellationToken = default)
@@ -28,8 +33,13 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
                 continue;
             }
 
-            // TODO Check if the account exists and save it to the database
+            var account = await _accountRepository.GetByIdAsync(record.AccountId);
+            if (account == null)
+            {
+                continue;
+            }
 
+            await _meterReadingRepository.AddAsync(record);
             successfulReadCount++;
         }
 
