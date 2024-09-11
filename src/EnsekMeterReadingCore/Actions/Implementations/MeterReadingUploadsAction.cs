@@ -51,6 +51,7 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
                 }
 
                 await _meterReadingRepository.AddAsync(record);
+                await _meterReadingRepository.Save();
                 successCount++;
             } 
             catch(Exception ex)

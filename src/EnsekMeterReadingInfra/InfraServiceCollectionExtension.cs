@@ -1,4 +1,5 @@
 using System;
+using EnsekMeterReadingCore.Entities;
 using EnsekMeterReadingCore.Repositories;
 using EnsekMeterReadingInfra.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,39 @@ public static class InfraServiceCollectionExtension
         services.AddScoped<IMeterReadingRepository, EfMeterReadingRepository>();
 
         return services;
+    }
+
+    public static void DataSeeding(EnsekDbContext ensekDbContext, string dataSeedPath)
+    {
+        ensekDbContext.Database.EnsureCreated();
+
+        using var fileStream = new FileStream(dataSeedPath, FileMode.Open, FileAccess.Read);
+        using var reader = new StreamReader(fileStream);
+        var lineText = string.Empty;
+
+        var index = 0;
+        while((lineText = reader.ReadLine()) != null)
+        {
+            try {
+                if (index == 0) {
+                    continue;
+                }
+
+                var columnCells = lineText.Split(",");
+                var account = new AccountEntity(){
+                    Id = Convert.ToInt32(columnCells[0]),
+                    FirstName = columnCells[1],
+                    LastName = columnCells[2]
+                };
+
+                ensekDbContext.Accounts.AddAsync(account);
+            }
+            finally{
+                index++;
+            }
+        }
+
+        ensekDbContext.SaveChanges();
     }
 }
 

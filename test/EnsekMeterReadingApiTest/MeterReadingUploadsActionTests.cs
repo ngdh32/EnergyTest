@@ -14,6 +14,7 @@ public class MeterReadingUploadsActionTests
 
     public MeterReadingUploadsActionTests(){
         _meterReadingRepositoryMock.Setup(x => x.AddAsync(It.IsAny<MeterReadingEntity>())).Returns(Task.CompletedTask);
+        _meterReadingRepositoryMock.Setup(x => x.Save()).Returns(Task.CompletedTask);
 
         _testee = new MeterReadingUploadsAction(new MeterReadingUploadCsvParser(), _accountRepositoryMock.Object, _meterReadingRepositoryMock.Object);
     }

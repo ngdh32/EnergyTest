@@ -1,4 +1,5 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnsekMeterReadingInfra.Repositories;
 
@@ -8,7 +9,7 @@ public abstract class EfBaseRepository
 
     public EfBaseRepository(EnsekDbContext dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext;       
     }
 
     public virtual async Task Save() {

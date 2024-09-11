@@ -2,9 +2,13 @@ test/EnsekMeterReadingApiTest/bin/
 test/EnsekMeterReadingApiTest/obj/
 src/EnsekMeterReadingApi/bin/
 src/EnsekMeterReadingApi/obj/
+src/EnsekMeterReadingApi/db/
 src/EnsekMeterReadingCore/bin/
 src/EnsekMeterReadingCore/obj/
 src/EnsekMeterReadingInfra/bin/
 src/EnsekMeterReadingInfra/obj/
 
 .vscode/
+src/.DS_Store
+src/EnsekMeterReadingApi/.DS_Store
+src/EnsekMeterReadingInfra/.DS_Store
