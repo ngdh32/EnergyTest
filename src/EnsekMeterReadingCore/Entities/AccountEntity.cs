@@ -2,7 +2,7 @@ using System;
 
 namespace EnsekMeterReadingCore.Entities;
 
-public class AccountEntity
+public class AccountEntity : BaseEntity
 {
     public required int AccountId { get; set; }
     

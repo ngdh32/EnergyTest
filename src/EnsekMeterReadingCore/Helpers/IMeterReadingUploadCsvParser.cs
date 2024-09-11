@@ -4,5 +4,5 @@ namespace EnsekMeterReadingCore.Helpers;
 
 public interface IMeterReadingUploadCsvParser 
 {
-    public MeterReading? GetMeterReadingFromLine(string lineText);
+    public MeterReadingEntity? GetMeterReadingFromLine(string lineText);
 }

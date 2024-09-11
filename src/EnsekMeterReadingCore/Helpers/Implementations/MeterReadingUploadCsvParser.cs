@@ -5,7 +5,7 @@ namespace EnsekMeterReadingCore.Helpers;
 
 public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
 {
-    public MeterReading? GetMeterReadingFromLine(string lineText)
+    public MeterReadingEntity? GetMeterReadingFromLine(string lineText)
     {
         var columnCells = lineText.Split(",");
         if (columnCells.Count() != 4)
@@ -28,7 +28,7 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
             return null;
         }
 
-        return new MeterReading {
+        return new MeterReadingEntity {
             AccountId = accountId,
             ReadingTime = meterReadingDateTime,
             Remark = columnCells[3],
