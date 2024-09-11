@@ -1,7 +1,8 @@
 using EnsekMeterReadingCore.Actions;
+using EnsekMeterReadingCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSingleton<IMeterReadingUploadsAction, MeterReadingUploadsAction>();
+builder.Services.AddCoreServices();
 
 var app = builder.Build();
 
