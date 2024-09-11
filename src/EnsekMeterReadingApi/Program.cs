@@ -1,8 +1,10 @@
 using EnsekMeterReadingCore.Actions;
 using EnsekMeterReadingCore;
+using EnsekMeterReadingInfra;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCoreServices();
+builder.Services.AddInfraServices(builder.Configuration);
 
 var app = builder.Build();
 

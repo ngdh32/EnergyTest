@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EnsekMeterReadingCore\EnsekMeterReadingCore.csproj" />
+    <ProjectReference Include="..\EnsekMeterReadingInfra\EnsekMeterReadingInfra.csproj" />
   </ItemGroup>
 
 </Project>

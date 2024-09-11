@@ -8,7 +8,7 @@ public class MeterReadingEntity : BaseEntity
 
     public required DateTime ReadingTime { get; set; }
 
-    public required int Value { get; set; }
+    public required int ReadingValue { get; set; }
 
     public required string Remark { get; set;}
 }

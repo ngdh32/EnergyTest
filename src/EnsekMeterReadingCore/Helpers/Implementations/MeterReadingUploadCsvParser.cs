@@ -35,7 +35,7 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
             AccountId = accountId,
             ReadingTime = meterReadingDateTime,
             Remark = columnCells[3],
-            Value = meterReadValue
+            ReadingValue = meterReadValue
         };
     }
 }

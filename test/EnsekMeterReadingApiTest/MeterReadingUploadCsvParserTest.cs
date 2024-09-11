@@ -25,7 +25,7 @@ public class MeterReadingUploadCsvParserTest
         Assert.NotNull(result);
         Assert.Equal(2344, result.AccountId);
         Assert.Equal(new DateTime(2019,4,22,9,24,00), result.ReadingTime);
-        Assert.Equal(1002, result.Value);
+        Assert.Equal(1002, result.ReadingValue);
         Assert.Equal("", result.Remark);
     }
 
@@ -91,7 +91,7 @@ public class MeterReadingUploadCsvParserTest
             var expectedValue = Convert.ToInt32(readingValueText);
 
             Assert.NotNull(result);
-            Assert.Equal(expectedValue, result.Value);
+            Assert.Equal(expectedValue, result.ReadingValue);
         }else {
             Assert.Null(result);
         }

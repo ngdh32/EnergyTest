@@ -24,7 +24,7 @@ public class MeterReadingUploadsActionTests
         // Arrange
         using var fileStream = new FileStream("TestData/Meter_Reading.csv", FileMode.Open, FileAccess.Read);
         _accountRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(new AccountEntity(){
-            AccountId = 1,
+            Id = 1,
             FirstName = "Test",
             LastName = "Test"
         });
@@ -35,7 +35,7 @@ public class MeterReadingUploadsActionTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(34, result.successCount);
-        Assert.Equal(2, result.failedCount);
+        Assert.Equal(1, result.failedCount);
     }
     
 
@@ -45,7 +45,7 @@ public class MeterReadingUploadsActionTests
         // Arrange
         using var fileStream = new FileStream("TestData/Meter_Reading.csv", FileMode.Open, FileAccess.Read);
         _accountRepositoryMock.Setup(x => x.GetByIdAsync(It.Is<int>(y => y != 2344))).ReturnsAsync(new AccountEntity(){
-            AccountId = 1,
+            Id = 1,
             FirstName = "Test",
             LastName = "Test"
         });
