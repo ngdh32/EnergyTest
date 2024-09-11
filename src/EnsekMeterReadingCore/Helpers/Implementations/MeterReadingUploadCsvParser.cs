@@ -23,7 +23,10 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
             return null;
         }
 
-        if (!int.TryParse(columnCells[2], out var meterReadValue))
+        if (!int.TryParse(columnCells[2], out var meterReadValue) ||
+            (meterReadValue < 0 && columnCells[2].Length > 6) ||
+            (meterReadValue >= 0 && columnCells[2].Length > 5) 
+        )
         {
             return null;
         }

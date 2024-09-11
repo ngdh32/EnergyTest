@@ -34,8 +34,8 @@ public class MeterReadingUploadsActionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(35, result.successCount);
-        Assert.Equal(0, result.failedCount);
+        Assert.Equal(34, result.successCount);
+        Assert.Equal(2, result.failedCount);
     }
     
 
@@ -58,7 +58,7 @@ public class MeterReadingUploadsActionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(32, result.successCount);
-        Assert.Equal(3, result.failedCount);
+        Assert.Equal(31, result.successCount);
+        Assert.Equal(4, result.failedCount);
     }
 }

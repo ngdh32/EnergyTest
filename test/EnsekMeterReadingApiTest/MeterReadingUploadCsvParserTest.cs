@@ -67,4 +67,34 @@ public class MeterReadingUploadCsvParserTest
         // Assert
         Assert.Null(result);
     }
+
+    [Theory]
+    [InlineData("-9", true)]
+    [InlineData("-99999", true)]
+    [InlineData("-99999.0", false)]
+    [InlineData("-99999.01", false)]
+    [InlineData("-100000", false)]
+    [InlineData("99999", true)]
+    [InlineData("99999.0", false)]
+    [InlineData("100000.0", false)]
+    public void GivenReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText, bool expectedResult)
+    {
+        // Arrange 
+        var lineText = $"2344,22/04/2019 09:24,{readingValueText},";
+
+        // Act
+        var result = _testee.GetMeterReadingFromLine(lineText);
+
+        // Assert
+        if (expectedResult)
+        {
+            var expectedValue = Convert.ToInt32(readingValueText);
+
+            Assert.NotNull(result);
+            Assert.Equal(expectedValue, result.Value);
+        }else {
+            Assert.Null(result);
+        }
+        
+    }
 }

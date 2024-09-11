@@ -27,10 +27,15 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
         using var reader = new StreamReader(stream);
         var lineText = string.Empty;
 
+        var index = 0;
         while((lineText = await reader.ReadLineAsync(cancellationToken)) != null)
         {
             try 
             {
+                if (index == 0){
+                    continue;
+                }
+
                 var record = _csvParser.GetMeterReadingFromLine(lineText);
                 if (record == null)
                 {
@@ -51,6 +56,11 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
             catch(Exception ex)
             {
                 failedCount++;
+            }
+            finally
+            {
+                
+                index++;
             }
         }
 
