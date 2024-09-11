@@ -22,7 +22,7 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
 
         while((lineText = await reader.ReadLineAsync(cancellationToken)) != null)
         {
-            var record = _csvParser.GetAllMeterRecordingsFromUpload(lineText);
+            var record = _csvParser.GetMeterReadingFromLine(lineText);
             if (record == null)
             {
                 continue;

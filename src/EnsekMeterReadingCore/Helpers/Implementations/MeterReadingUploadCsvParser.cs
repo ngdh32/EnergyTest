@@ -5,7 +5,7 @@ namespace EnsekMeterReadingCore.Helpers;
 
 public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
 {
-    public MeterReading? GetAllMeterRecordingsFromUpload(string lineText)
+    public MeterReading? GetMeterReadingFromLine(string lineText)
     {
         var columnCells = lineText.Split(",");
         if (columnCells.Count() != 4)
