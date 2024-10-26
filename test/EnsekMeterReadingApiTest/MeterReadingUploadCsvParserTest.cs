@@ -1,5 +1,6 @@
 using System;
 using EnsekMeterReadingCore.Helpers;
+using EnsekMeterReadingCore.Helpers.Implementations;
 
 namespace EnsekMeterReadingApiTest;
 
@@ -22,11 +23,12 @@ public class MeterReadingUploadCsvParserTest
         var result = _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(2344, result.AccountId);
-        Assert.Equal(new DateTime(2019,4,22,9,24,00), result.ReadingTime);
-        Assert.Equal(1002, result.ReadingValue);
-        Assert.Equal("", result.Remark);
+        Assert.True(result.Successful);
+        Assert.NotNull(result.MeterReadingEntity);
+        Assert.Equal(2344, result.MeterReadingEntity.AccountId);
+        Assert.Equal(new DateTime(2019,4,22,9,24,00), result.MeterReadingEntity.ReadingTime);
+        Assert.Equal(1002, result.MeterReadingEntity.ReadingValue);
+        Assert.Equal("", result.MeterReadingEntity.Remark);
     }
 
     [Fact]
@@ -39,7 +41,7 @@ public class MeterReadingUploadCsvParserTest
         var result = _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
-        Assert.Null(result);
+        Assert.False(result.Successful);
     }
 
     [Fact]
@@ -52,7 +54,7 @@ public class MeterReadingUploadCsvParserTest
         var result = _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
-        Assert.Null(result);
+        Assert.False(result.Successful);
     }
 
     [Fact]
@@ -65,19 +67,14 @@ public class MeterReadingUploadCsvParserTest
         var result = _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
-        Assert.Null(result);
+        Assert.False(result.Successful);
     }
 
     [Theory]
-    [InlineData("-9", true)]
-    [InlineData("-99999", true)]
-    [InlineData("-99999.0", false)]
-    [InlineData("-99999.01", false)]
-    [InlineData("-100000", false)]
-    [InlineData("99999", true)]
-    [InlineData("99999.0", false)]
-    [InlineData("100000.0", false)]
-    public void GivenReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText, bool expectedResult)
+    [InlineData("-9", -9)]
+    [InlineData("-99999", -99999)]
+    [InlineData("99999", 99999)]
+    public void GivenValidReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText, decimal expectedValue)
     {
         // Arrange 
         var lineText = $"2344,22/04/2019 09:24,{readingValueText},";
@@ -86,15 +83,27 @@ public class MeterReadingUploadCsvParserTest
         var result = _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
-        if (expectedResult)
-        {
-            var expectedValue = Convert.ToInt32(readingValueText);
+        Assert.True(result.Successful);
+        Assert.NotNull(result.MeterReadingEntity);
+        Assert.Equal(expectedValue, result.MeterReadingEntity.ReadingValue);
+    }
+    
+    
+    [Theory]
+    [InlineData("99999.0")]
+    [InlineData("100000.0")]
+    [InlineData("-99999.0")]
+    [InlineData("-99999.01")]
+    [InlineData("-100000")]
+    public void GivenInvalidReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText)
+    {
+        // Arrange 
+        var lineText = $"2344,22/04/2019 09:24,{readingValueText},";
 
-            Assert.NotNull(result);
-            Assert.Equal(expectedValue, result.ReadingValue);
-        }else {
-            Assert.Null(result);
-        }
-        
+        // Act
+        var result = _testee.GetMeterReadingFromLine(lineText);
+
+        // Assert
+        Assert.False(result.Successful);
     }
 }

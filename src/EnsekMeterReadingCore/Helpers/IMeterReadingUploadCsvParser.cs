@@ -1,8 +1,8 @@
-using EnsekMeterReadingCore.Entities;
+using EnsekMeterReadingCore.Models;
 
 namespace EnsekMeterReadingCore.Helpers;
 
 public interface IMeterReadingUploadCsvParser 
 {
-    public MeterReadingEntity? GetMeterReadingFromLine(string lineText);
+    public MeterReadingRowResult GetMeterReadingFromLine(string lineText);
 }

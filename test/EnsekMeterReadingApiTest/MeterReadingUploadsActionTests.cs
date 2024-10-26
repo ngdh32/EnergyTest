@@ -1,6 +1,7 @@
 using EnsekMeterReadingCore.Actions;
 using EnsekMeterReadingCore.Entities;
 using EnsekMeterReadingCore.Helpers;
+using EnsekMeterReadingCore.Helpers.Implementations;
 using EnsekMeterReadingCore.Repositories;
 using Moq;
 
@@ -35,8 +36,8 @@ public class MeterReadingUploadsActionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(34, result.successCount);
-        Assert.Equal(1, result.failedCount);
+        Assert.Equal(34, result.SuccessCount);
+        Assert.Equal(1, result.FailedCount);
     }
     
 
@@ -59,7 +60,7 @@ public class MeterReadingUploadsActionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(31, result.successCount);
-        Assert.Equal(4, result.failedCount);
+        Assert.Equal(31, result.SuccessCount);
+        Assert.Equal(4, result.FailedCount);
     }
 }

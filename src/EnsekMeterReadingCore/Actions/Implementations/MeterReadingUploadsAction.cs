@@ -36,13 +36,14 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
                     continue;
                 }
 
-                var record = _csvParser.GetMeterReadingFromLine(lineText);
-                if (record == null)
+                var result = _csvParser.GetMeterReadingFromLine(lineText);
+                if (!result.Successful)
                 {
                     failedCount++;
                     continue;
                 }
 
+                var record = result.MeterReadingEntity;
                 var account = await _accountRepository.GetByIdAsync(record.AccountId);
                 if (account == null)
                 {
