@@ -14,3 +14,4 @@ In MeterReadingUploadsAction.cs, may consider having in memroy dictionary so tha
 Questions:
 1. What is the x in the line 29 in the Meter_Reading.csv? Why is there a missing column?
 2. If some of the entries are correct and some of them are not, should those correct entries continue to be processed? (Assumption: Yes)
+3. Does the number format NNNNN not support negative nummbers e.g. -6575?

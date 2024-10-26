@@ -6,22 +6,22 @@ namespace EnsekMeterReadingCore.Helpers.Implementations;
 
 public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
 {
-    public MeterReadingRowResult GetMeterReadingFromLine(string lineText)
+    public MeterReadingUploadRowResult GetMeterReadingFromLine(string lineText)
     {
         var columnCells = lineText.Split(",");
         if (columnCells.Count() != 4)
         {
-            return new MeterReadingRowResult();
+            return new MeterReadingUploadRowResult();
         }
 
         if (!int.TryParse(columnCells[0], out var accountId))
         {
-            return new MeterReadingRowResult();
+            return new MeterReadingUploadRowResult();
         }
 
         if (!DateTime.TryParseExact(columnCells[1], "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var meterReadingDateTime))
         {
-            return new MeterReadingRowResult();
+            return new MeterReadingUploadRowResult();
         }
 
         if (!int.TryParse(columnCells[2], out var meterReadValue) ||
@@ -29,11 +29,11 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
             (meterReadValue >= 0 && columnCells[2].Length > 5) 
         )
         {
-            return new MeterReadingRowResult();
+            return new MeterReadingUploadRowResult();
         }
 
 
-        return new MeterReadingRowResult(true, new MeterReadingEntity
+        return new MeterReadingUploadRowResult(true, new MeterReadingEntity
         {
             AccountId = accountId,
             ReadingTime = meterReadingDateTime,
