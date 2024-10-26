@@ -18,11 +18,11 @@ public class MeterReadingUploadsActionTests
         _meterReadingRepositoryMock.Setup(x => x.AddAsync(It.IsAny<MeterReadingEntity>())).Returns(Task.CompletedTask);
         _meterReadingRepositoryMock.Setup(x => x.Save()).Returns(Task.CompletedTask);
 
-        _testee = new MeterReadingUploadsAction(new MeterReadingUploadCsvParser(), _accountRepositoryMock.Object, _meterReadingRepositoryMock.Object);
+        _testee = new MeterReadingUploadsAction(new MeterReadingUploadCsvParser(_accountRepositoryMock.Object), _meterReadingRepositoryMock.Object);
     }
 
     [Fact]
-    public async Task GivenValidMeterDataUploadedAllAccountCanBeFound_WhenRun_ThenRunSuccessfully()
+    public async Task GivenValidMeterDataUploaded_WhenRun_ThenRunSuccessfully()
     {
         // Arrange
         using var fileStream = new FileStream("TestData/Meter_Reading.csv", FileMode.Open, FileAccess.Read);

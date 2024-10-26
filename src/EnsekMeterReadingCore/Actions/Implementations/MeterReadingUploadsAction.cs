@@ -7,13 +7,11 @@ namespace EnsekMeterReadingCore.Actions.Implementations;
 public class MeterReadingUploadsAction : IMeterReadingUploadsAction
 {
     private readonly IMeterReadingUploadCsvParser _csvParser;
-    private readonly IAccountRepository _accountRepository;
     private readonly IMeterReadingRepository _meterReadingRepository;
 
-    public MeterReadingUploadsAction(IMeterReadingUploadCsvParser csvParser, IAccountRepository accountRepository, IMeterReadingRepository meterReadingRepository)
+    public MeterReadingUploadsAction(IMeterReadingUploadCsvParser csvParser, IMeterReadingRepository meterReadingRepository)
     {
         _csvParser = csvParser;
-        _accountRepository = accountRepository;
         _meterReadingRepository = meterReadingRepository;
     }
 
@@ -34,7 +32,7 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
                     continue;
                 }
 
-                var result = _csvParser.GetMeterReadingFromLine(lineText);
+                var result = await _csvParser.GetMeterReadingFromLine(lineText);
                 if (!result.Successful)
                 {
                     failedCount++;
@@ -42,12 +40,6 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
                 }
 
                 var record = result.MeterReadingEntity;
-                var account = await _accountRepository.GetByIdAsync(record.AccountId);
-                if (account == null)
-                {
-                    failedCount++;
-                    continue;
-                }
 
                 await _meterReadingRepository.AddAsync(record);
                 successCount++;

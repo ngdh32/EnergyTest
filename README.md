@@ -1,17 +1,27 @@
-Settings:
+# Related AWS Resource:
+- EC2/Fargate
+- Load Balancer
+- Route 53
+- VPC
+- AWS WAF for extra web security
 
+# Suggestions:
+- Use the read replica to get back the account from the database
+- Use the redis to host the list of the account for better performance
+- Use CDK program/terraform to deploy aws resources
 
-Considerations:
+# Pitfall:
+- If the file size is too big
+- If there are too many requests
 
-Process it asynchonously;
-If returning the number is not necessary, what we can do is create an endpoint in AWS Api Gateway, associate it with a lambda that does the validation checkin. If the validation passes, store it in S3 bucket with life policy that move the file to S3 intelligent tier or IA tier, use Amazon EventBridge to trigger another lambda when a file is uploaded and then process it with the action in this solution. That's why I move the action to core so that the new lambda project can reference it without referencing the API.  
+# Alternative Production Architecture:
+1. Create a Api Gateway with lambda that helps save the uploaded file to S3 bucket
+2. Create S3 Upload Event to trigger another lambda to process the file
+3. Do the validation and save the data to the database in the lambda
+4. The maximum time for the lambda is 15 minutes. If the file size is too large, consider convert it to the fargate task
+5. Create a S3 policy to move the files to S3 Glacier if the files need to be kept for compliance reason
 
-Database connection:
-Put it in the AWS secret manager. If we are using AWS RDS with read replica enabled, we can have 2 different connection string. One is for read/write and one is for read only so as to ease the loading. 
-
-In MeterReadingUploadsAction.cs, may consider having in memroy dictionary so that we dont have to access to the database every line
-
-Questions:
-1. What is the x in the line 29 in the Meter_Reading.csv? Why is there a missing column?
+# Assumptions:
+1. What is the x in the line 29 in the Meter_Reading.csv? Why is there a missing column? (Assumption: it is a deleted column or remark column)
 2. If some of the entries are correct and some of them are not, should those correct entries continue to be processed? (Assumption: Yes)
-3. Does the number format NNNNN not support negative nummbers e.g. -6575?
+3. Does the number format NNNNN not support negative nummbers e.g. -6575? (Assumption: still process so the total meter value can be deducted for adjustment reason)

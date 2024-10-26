@@ -1,26 +1,37 @@
 using System;
+using EnsekMeterReadingCore.Entities;
 using EnsekMeterReadingCore.Helpers;
 using EnsekMeterReadingCore.Helpers.Implementations;
+using EnsekMeterReadingCore.Repositories;
+using Moq;
 
 namespace EnsekMeterReadingApiTest;
 
 public class MeterReadingUploadCsvParserTest
-{
+{   
     private readonly IMeterReadingUploadCsvParser _testee;
+    private readonly Mock<IAccountRepository> _accountRepositoryMock = new(MockBehavior.Strict);
 
     public MeterReadingUploadCsvParserTest()
     {
-        _testee = new MeterReadingUploadCsvParser();
+        _accountRepositoryMock.Setup(repo => repo.GetByIdAsync(It.Is<int>(x => x == 2344))).ReturnsAsync(() => new AccountEntity()
+        {
+            Id = 2344,
+        });
+        
+        _accountRepositoryMock.Setup(repo => repo.GetByIdAsync(It.Is<int>(x => x != 2344))).ReturnsAsync(() => null);
+        
+        _testee = new MeterReadingUploadCsvParser(_accountRepositoryMock.Object);
     }
 
     [Fact]
-    public void GivenValidLine_WheRun_ThenReturnEntity()
+    public async Task GivenValidLine_WheRun_ThenReturnEntity()
     {
         // Arrange 
         const string lineText = "2344,22/04/2019 09:24,1002,";
 
         // Act
-        var result = _testee.GetMeterReadingFromLine(lineText);
+        var result = await _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.True(result.Successful);
@@ -32,39 +43,52 @@ public class MeterReadingUploadCsvParserTest
     }
 
     [Fact]
-    public void GivenInvalidAccountId_WheRun_ThenReturnNull()
+    public async Task GivenInvalidAccountId_WheRun_ThenReturnNull()
     {
         // Arrange 
         const string lineText = "abc,22/04/2019 09:24,1002,";
 
         // Act
-        var result = _testee.GetMeterReadingFromLine(lineText);
+        var result = await _testee.GetMeterReadingFromLine(lineText);
+
+        // Assert
+        Assert.False(result.Successful);
+    }
+    
+    [Fact]
+    public async Task GivenValidNotFoundAccountId_WheRun_ThenReturnNull()
+    {
+        // Arrange 
+        const string lineText = "999,22/04/2019 09:24,1002,";
+
+        // Act
+        var result = await _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
     }
 
     [Fact]
-    public void GivenInvalidRecordDate_WheRun_ThenReturnNull()
+    public async Task GivenInvalidRecordDate_WheRun_ThenReturnNull()
     {
         // Arrange 
         const string lineText = "2344,abc,1002,";
 
         // Act
-        var result = _testee.GetMeterReadingFromLine(lineText);
+        var result = await _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
     }
 
     [Fact]
-    public void GivenInvalidValue_WheRun_ThenReturnNull()
+    public async Task GivenInvalidValue_WheRun_ThenReturnNull()
     {
         // Arrange 
         const string lineText = "2344,22/04/2019 09:24,abc,";
 
         // Act
-        var result = _testee.GetMeterReadingFromLine(lineText);
+        var result = await _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
@@ -74,13 +98,13 @@ public class MeterReadingUploadCsvParserTest
     [InlineData("-9", -9)]
     [InlineData("-99999", -99999)]
     [InlineData("99999", 99999)]
-    public void GivenValidReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText, decimal expectedValue)
+    public async Task GivenValidReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText, decimal expectedValue)
     {
         // Arrange 
         var lineText = $"2344,22/04/2019 09:24,{readingValueText},";
 
         // Act
-        var result = _testee.GetMeterReadingFromLine(lineText);
+        var result = await _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.True(result.Successful);
@@ -95,13 +119,13 @@ public class MeterReadingUploadCsvParserTest
     [InlineData("-99999.0")]
     [InlineData("-99999.01")]
     [InlineData("-100000")]
-    public void GivenInvalidReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText)
+    public async Task GivenInvalidReadingValueText_WheRun_ThenReturnExpectedResult(string readingValueText)
     {
         // Arrange 
         var lineText = $"2344,22/04/2019 09:24,{readingValueText},";
 
         // Act
-        var result = _testee.GetMeterReadingFromLine(lineText);
+        var result = await _testee.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);

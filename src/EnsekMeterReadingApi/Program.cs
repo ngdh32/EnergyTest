@@ -5,14 +5,27 @@ using EnsekMeterReadingInfra;
 using EnsekMeterReadingCore.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCoreServices();
 builder.Services.AddInfraServices(builder.Configuration);
+builder.Services.AddCoreServices();
+
+// Definitely need to change it in prod
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
+app.UseCors("AllowAllOrigins");
+
 new DataSeeding(builder.Configuration).Seed(app);
 
 app.MapPost("/meter-reading-uploads", async (IMeterReadingUploadsAction action, HttpContext httpContext) => {
-    if (httpContext.Request.HasFormContentType)
+    if (!httpContext.Request.HasFormContentType)
     {
         return Results.BadRequest("Not Form Request");
     }
@@ -24,6 +37,10 @@ app.MapPost("/meter-reading-uploads", async (IMeterReadingUploadsAction action, 
     }
 
     var file = form.Files.First();
+    if (file.ContentType != "text/csv" || Path.GetExtension(file.FileName).ToLower() != ".csv")
+    {
+        return Results.BadRequest("File is not a .csv file.");
+    }
 
     await using var fileStream = file.OpenReadStream();
     var result = await action.RunAsync(fileStream);
@@ -33,6 +50,11 @@ app.MapPost("/meter-reading-uploads", async (IMeterReadingUploadsAction action, 
 
 app.MapGet("/accounts", async (IAccountRepository accountRepository) => {
     var result = await accountRepository.GetAllAsync();
+    return Results.Ok(result);
+});
+
+app.MapGet("/meters", async (IMeterReadingRepository meterReadingRepository) => {
+    var result = await meterReadingRepository.GetAllAsync();
     return Results.Ok(result);
 });
 

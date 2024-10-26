@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnsekMeterReadingInfra", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnsekMeterReadingApiTest", "test\EnsekMeterReadingApiTest\EnsekMeterReadingApiTest.csproj", "{00DCC602-112A-4AE0-B193-002E7A46A3B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnsekMeterReadingClient", "src\EnsekMeterReadingClient\EnsekMeterReadingClient.csproj", "{2E7DD1CA-A474-48AF-89FE-B1171C683A14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{00DCC602-112A-4AE0-B193-002E7A46A3B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00DCC602-112A-4AE0-B193-002E7A46A3B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00DCC602-112A-4AE0-B193-002E7A46A3B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E7DD1CA-A474-48AF-89FE-B1171C683A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E7DD1CA-A474-48AF-89FE-B1171C683A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E7DD1CA-A474-48AF-89FE-B1171C683A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E7DD1CA-A474-48AF-89FE-B1171C683A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +52,6 @@ Global
 		{E9DA1375-3D4E-46FC-94B8-0951B01C0633} = {822878FC-CC8F-46AB-AA2A-4BFD1D8DBD69}
 		{9D5E4744-6D29-4134-8C35-18F03112C718} = {822878FC-CC8F-46AB-AA2A-4BFD1D8DBD69}
 		{00DCC602-112A-4AE0-B193-002E7A46A3B3} = {F501127C-6629-41DB-8768-EC6A0AA8F3BF}
+		{2E7DD1CA-A474-48AF-89FE-B1171C683A14} = {822878FC-CC8F-46AB-AA2A-4BFD1D8DBD69}
 	EndGlobalSection
 EndGlobal

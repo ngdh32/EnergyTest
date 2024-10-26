@@ -1,0 +1,23 @@
+﻿@page
+@model EnsekMeterReadingClient.Pages.IndexModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script src="js/site.js"></script>
+</head>
+<body>
+<input id="meterUploadUrl" type="hidden" value="@Model.MeterUploadUrl"/>
+<div>
+    <form id="fileUploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="file"/>
+        <button type="button" id="uploadBtn">Upload</button>
+    </form>
+    <label id="successLabel"></label>
+</div>
+</body>
+</html>

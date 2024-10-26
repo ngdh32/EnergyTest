@@ -10,7 +10,7 @@ public static class ServiceCollectionExtension
 {
     public static void AddCoreServices(this IServiceCollection services)
     {
-        services.AddSingleton<IMeterReadingUploadCsvParser, MeterReadingUploadCsvParser>();
+        services.AddScoped<IMeterReadingUploadCsvParser, MeterReadingUploadCsvParser>();
         services.AddScoped<IMeterReadingUploadsAction, MeterReadingUploadsAction>();
     }
 }

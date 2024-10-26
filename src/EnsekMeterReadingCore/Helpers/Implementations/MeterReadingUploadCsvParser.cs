@@ -1,12 +1,20 @@
 using System.Globalization;
 using EnsekMeterReadingCore.Entities;
 using EnsekMeterReadingCore.Models;
+using EnsekMeterReadingCore.Repositories;
 
 namespace EnsekMeterReadingCore.Helpers.Implementations;
 
 public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
 {
-    public MeterReadingUploadRowResult GetMeterReadingFromLine(string lineText)
+    private readonly IAccountRepository _accountRepository;
+
+    public MeterReadingUploadCsvParser(IAccountRepository accountRepository)
+    {
+        _accountRepository = accountRepository;
+    }
+
+    public async Task<MeterReadingUploadRowResult> GetMeterReadingFromLine(string lineText)
     {
         var columnCells = lineText.Split(",");
         if (columnCells.Count() != 4)
@@ -15,6 +23,12 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
         }
 
         if (!int.TryParse(columnCells[0], out var accountId))
+        {
+            return new MeterReadingUploadRowResult();
+        }
+        
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        if (account == null)
         {
             return new MeterReadingUploadRowResult();
         }
@@ -31,8 +45,7 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
         {
             return new MeterReadingUploadRowResult();
         }
-
-
+        
         return new MeterReadingUploadRowResult(true, new MeterReadingEntity
         {
             AccountId = accountId,
