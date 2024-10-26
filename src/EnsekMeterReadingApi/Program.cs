@@ -12,8 +12,13 @@ var app = builder.Build();
 new DataSeeding(builder.Configuration).Seed(app);
 
 app.MapPost("/meter-reading-uploads", async (IMeterReadingUploadsAction action, HttpContext httpContext) => {
+    if (httpContext.Request.HasFormContentType)
+    {
+        return Results.BadRequest("Not Form Request");
+    }
+    
     var form = await httpContext.Request.ReadFormAsync();
-    if (form?.Files?.Any() != true)
+    if (form.Files.Any() != true)
     {
         return Results.BadRequest("No file uploaded.");
     }

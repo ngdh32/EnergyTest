@@ -1,4 +1,3 @@
-using System;
 using EnsekMeterReadingCore.Models;
 
 namespace EnsekMeterReadingCore.Actions;

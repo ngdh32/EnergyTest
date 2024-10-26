@@ -1,10 +1,8 @@
-using System;
-using System.Globalization;
 using EnsekMeterReadingCore.Helpers;
 using EnsekMeterReadingCore.Models;
 using EnsekMeterReadingCore.Repositories;
 
-namespace EnsekMeterReadingCore.Actions;
+namespace EnsekMeterReadingCore.Actions.Implementations;
 
 public class MeterReadingUploadsAction : IMeterReadingUploadsAction
 {
@@ -52,20 +50,19 @@ public class MeterReadingUploadsAction : IMeterReadingUploadsAction
                 }
 
                 await _meterReadingRepository.AddAsync(record);
-                await _meterReadingRepository.Save();
                 successCount++;
             } 
-            catch(Exception ex)
+            catch(Exception)
             {
                 failedCount++;
             }
             finally
             {
-                
                 index++;
             }
         }
 
+        await _meterReadingRepository.Save();
         return new MeterReadingUploadsActionResult(successCount, failedCount);
     }
 }
