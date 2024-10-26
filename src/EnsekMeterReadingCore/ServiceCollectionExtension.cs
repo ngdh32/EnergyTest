@@ -7,11 +7,9 @@ namespace EnsekMeterReadingCore;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddCoreServices(this IServiceCollection services)
+    public static void AddCoreServices(this IServiceCollection services)
     {
         services.AddSingleton<IMeterReadingUploadCsvParser, MeterReadingUploadCsvParser>();
         services.AddScoped<IMeterReadingUploadsAction, MeterReadingUploadsAction>();
-
-        return services;
     }
 }
