@@ -22,6 +22,10 @@ public static class InfraServiceCollectionExtension
     {
         ensekDbContext.Database.EnsureCreated();
 
+        // Remove all existing entries
+        ensekDbContext.Accounts.ExecuteDelete();
+        ensekDbContext.MeterReadings.ExecuteDelete();
+
         using var fileStream = new FileStream(dataSeedPath, FileMode.Open, FileAccess.Read);
         using var reader = new StreamReader(fileStream);
         var lineText = string.Empty;

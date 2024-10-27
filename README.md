@@ -1,3 +1,23 @@
+# How to run:
+1. Make sure .net 8 sdk is installed
+2. Go to src/EnsekMeterReadingApi folder
+3. Open appsettings.json, set DataSeeding to true and enter the filepath of the Test_Accounts.csv 
+4. Run the following command
+```
+dotnet build
+dotnet run
+```
+5. Get the url of the Api (Should be on: http://localhost:5063)
+6. Open another terminal and go to src/EnsekMeterReadingClient
+7. Open appsettings.json, put the url into MeterUploadUrl and add meter-reading-uploads at the end (Should be: http://localhost:5063/meter-reading-uploads)
+8. Run the following command
+```
+dotnet build
+dotnet run
+```
+9. Open the browser and go to http://localhost:5156. Upload Meter_Reading.csv and check the result.
+
+
 # Related AWS Resource:
 - EC2/Fargate
 - Load Balancer/Api Gateway

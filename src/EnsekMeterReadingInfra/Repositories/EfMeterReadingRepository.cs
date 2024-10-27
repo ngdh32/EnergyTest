@@ -26,7 +26,7 @@ public class EfMeterReadingRepository : EfBaseRepository, IMeterReadingRepositor
     public DateTime? GetAccountLastReadingTime(int accountId)
     {
         var entities = _dbContext.MeterReadings.Where(x => x.AccountId == accountId);
-        return entities?.Max(x => x.ReadingTime);
+        return entities?.Any() == true ? entities.Max(x => x.ReadingTime) : null;
     }
 
     public async Task<IEnumerable<MeterReadingEntity>> GetAllAsync()

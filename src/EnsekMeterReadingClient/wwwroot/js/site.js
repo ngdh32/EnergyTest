@@ -13,8 +13,8 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
-                    if (response.successCount !== undefined) {
-                        $('#successLabel').text('Successful Number: ' + response.successCount);
+                    if (response.successCount !== undefined && response.failedCount !== undefined) {
+                        $('#successLabel').text('Successful Number: ' + response.successCount + '\n Failed Number: ' + response.failedCount);
                     } else {
                         $('#successLabel').text('Upload failed');
                     }
