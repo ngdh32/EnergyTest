@@ -9,8 +9,9 @@ namespace EnsekMeterReadingApiTest;
 
 public class MeterReadingUploadCsvParserTest
 {   
-    private readonly IMeterReadingUploadCsvParser _testee;
+    private readonly IMeterReadingUploadCsvParser _parser;
     private readonly Mock<IAccountRepository> _accountRepositoryMock = new(MockBehavior.Strict);
+    private readonly Mock<IMeterReadingRepository> _meterReadingRepositoryMock = new(MockBehavior.Strict);
 
     public MeterReadingUploadCsvParserTest()
     {
@@ -18,10 +19,12 @@ public class MeterReadingUploadCsvParserTest
         {
             Id = 2344,
         });
-        
+        _meterReadingRepositoryMock.Setup(repo => repo.GetAccountLastReadingTime(It.Is<int>(x => x == 2344)))
+            .Returns(() => new DateTime(2018, 1, 1));
+
         _accountRepositoryMock.Setup(repo => repo.GetByIdAsync(It.Is<int>(x => x != 2344))).ReturnsAsync(() => null);
         
-        _testee = new MeterReadingUploadCsvParser(_accountRepositoryMock.Object);
+        _parser = new MeterReadingUploadCsvParser(_accountRepositoryMock.Object, _meterReadingRepositoryMock.Object);
     }
 
     [Fact]
@@ -31,7 +34,7 @@ public class MeterReadingUploadCsvParserTest
         const string lineText = "2344,22/04/2019 09:24,1002,";
 
         // Act
-        var result = await _testee.GetMeterReadingFromLine(lineText);
+        var result = await _parser.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.True(result.Successful);
@@ -49,7 +52,7 @@ public class MeterReadingUploadCsvParserTest
         const string lineText = "abc,22/04/2019 09:24,1002,";
 
         // Act
-        var result = await _testee.GetMeterReadingFromLine(lineText);
+        var result = await _parser.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
@@ -62,7 +65,7 @@ public class MeterReadingUploadCsvParserTest
         const string lineText = "999,22/04/2019 09:24,1002,";
 
         // Act
-        var result = await _testee.GetMeterReadingFromLine(lineText);
+        var result = await _parser.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
@@ -75,7 +78,7 @@ public class MeterReadingUploadCsvParserTest
         const string lineText = "2344,abc,1002,";
 
         // Act
-        var result = await _testee.GetMeterReadingFromLine(lineText);
+        var result = await _parser.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
@@ -88,7 +91,7 @@ public class MeterReadingUploadCsvParserTest
         const string lineText = "2344,22/04/2019 09:24,abc,";
 
         // Act
-        var result = await _testee.GetMeterReadingFromLine(lineText);
+        var result = await _parser.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
@@ -104,7 +107,7 @@ public class MeterReadingUploadCsvParserTest
         var lineText = $"2344,22/04/2019 09:24,{readingValueText},";
 
         // Act
-        var result = await _testee.GetMeterReadingFromLine(lineText);
+        var result = await _parser.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.True(result.Successful);
@@ -125,9 +128,50 @@ public class MeterReadingUploadCsvParserTest
         var lineText = $"2344,22/04/2019 09:24,{readingValueText},";
 
         // Act
-        var result = await _testee.GetMeterReadingFromLine(lineText);
+        var result = await _parser.GetMeterReadingFromLine(lineText);
 
         // Assert
         Assert.False(result.Successful);
+    }
+    
+    [Fact]
+    public async Task GivenNoLastReadingTime_WheRun_ThenReturnEntity()
+    {
+        // Arrange 
+        const string lineText = "2344,22/04/2019 09:24,1002,";
+        
+        _meterReadingRepositoryMock.Setup(repo => repo.GetAccountLastReadingTime(It.Is<int>(x => x == 2344)))
+            .Returns(() => null);
+
+
+        // Act
+        var result = await _parser.GetMeterReadingFromLine(lineText);
+
+        // Assert
+        Assert.True(result.Successful);
+        Assert.NotNull(result.MeterReadingEntity);
+        Assert.Equal(2344, result.MeterReadingEntity.AccountId);
+        Assert.Equal(new DateTime(2019,4,22,9,24,00), result.MeterReadingEntity.ReadingTime);
+        Assert.Equal(1002, result.MeterReadingEntity.ReadingValue);
+        Assert.Equal("", result.MeterReadingEntity.Remark);
+    }
+    
+    
+    [Fact]
+    public async Task GivenLastReadingTimeIsLater_WheRun_ThenReturnEntity()
+    {
+        // Arrange 
+        const string lineText = "2344,22/04/2019 09:24,1002,";
+        
+        _meterReadingRepositoryMock.Setup(repo => repo.GetAccountLastReadingTime(It.Is<int>(x => x == 2344)))
+            .Returns(() => new DateTime(2024,1, 1));
+
+
+        // Act
+        var result = await _parser.GetMeterReadingFromLine(lineText);
+
+        // Assert
+        Assert.False(result.Successful);
+        Assert.Null(result.MeterReadingEntity);
     }
 }
