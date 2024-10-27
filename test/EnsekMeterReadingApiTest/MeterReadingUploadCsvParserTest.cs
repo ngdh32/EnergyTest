@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.Metadata;
 using EnsekMeterReadingCore.Entities;
 using EnsekMeterReadingCore.Helpers;
 using EnsekMeterReadingCore.Helpers.Implementations;
@@ -12,18 +13,27 @@ public class MeterReadingUploadCsvParserTest
     private readonly IMeterReadingUploadCsvParser _parser;
     private readonly Mock<IAccountRepository> _accountRepositoryMock = new(MockBehavior.Strict);
     private readonly Mock<IMeterReadingRepository> _meterReadingRepositoryMock = new(MockBehavior.Strict);
+    
+    private static int[] AccountIds => [2344, 2000];
 
     public MeterReadingUploadCsvParserTest()
     {
-        _accountRepositoryMock.Setup(repo => repo.GetByIdAsync(It.Is<int>(x => x == 2344))).ReturnsAsync(() => new AccountEntity()
+        _accountRepositoryMock.Setup(repo => repo.GetByIdAsync(It.IsIn(AccountIds))).ReturnsAsync(() => new AccountEntity()
         {
             Id = 2344,
         });
-        _meterReadingRepositoryMock.Setup(repo => repo.GetAccountLastReadingTime(It.Is<int>(x => x == 2344)))
-            .Returns(() => new DateTime(2018, 1, 1));
-
-        _accountRepositoryMock.Setup(repo => repo.GetByIdAsync(It.Is<int>(x => x != 2344))).ReturnsAsync(() => null);
+        _accountRepositoryMock.Setup(repo => repo.GetByIdAsync(It.IsNotIn(AccountIds))).ReturnsAsync(() => null);
         
+        _meterReadingRepositoryMock.Setup(repo => repo.GetAccountLastReadingTime(It.Is<int>(x => x == 2344)))
+            .Returns(() => new MeterReadingEntity()
+            {
+                Id = 1,
+                AccountId = 2344,
+                Remark = String.Empty,
+                ReadingTime = new DateTime(2018, 1, 1),
+                ReadingValue = 1002
+            });
+
         _parser = new MeterReadingUploadCsvParser(_accountRepositoryMock.Object, _meterReadingRepositoryMock.Object);
     }
 
@@ -138,11 +148,7 @@ public class MeterReadingUploadCsvParserTest
     public async Task GivenNoLastReadingTime_WheRun_ThenReturnEntity()
     {
         // Arrange 
-        const string lineText = "2344,22/04/2019 09:24,1002,";
-        
-        _meterReadingRepositoryMock.Setup(repo => repo.GetAccountLastReadingTime(It.Is<int>(x => x == 2344)))
-            .Returns(() => null);
-
+        const string lineText = "2000,22/04/2019 09:24,1002,";
 
         // Act
         var result = await _parser.GetMeterReadingFromLine(lineText);
@@ -150,7 +156,7 @@ public class MeterReadingUploadCsvParserTest
         // Assert
         Assert.True(result.Successful);
         Assert.NotNull(result.MeterReadingEntity);
-        Assert.Equal(2344, result.MeterReadingEntity.AccountId);
+        Assert.Equal(2000, result.MeterReadingEntity.AccountId);
         Assert.Equal(new DateTime(2019,4,22,9,24,00), result.MeterReadingEntity.ReadingTime);
         Assert.Equal(1002, result.MeterReadingEntity.ReadingValue);
         Assert.Equal("", result.MeterReadingEntity.Remark);
@@ -161,11 +167,22 @@ public class MeterReadingUploadCsvParserTest
     public async Task GivenLastReadingTimeIsLater_WheRun_ThenReturnEntity()
     {
         // Arrange 
-        const string lineText = "2344,22/04/2019 09:24,1002,";
-        
-        _meterReadingRepositoryMock.Setup(repo => repo.GetAccountLastReadingTime(It.Is<int>(x => x == 2344)))
-            .Returns(() => new DateTime(2024,1, 1));
+        const string lineText = "2344,22/04/2017 09:24,1002,";
 
+
+        // Act
+        var result = await _parser.GetMeterReadingFromLine(lineText);
+
+        // Assert
+        Assert.False(result.Successful);
+        Assert.Null(result.MeterReadingEntity);
+    }
+    
+    [Fact]
+    public async Task GivenDuplicateLastReadingTimeIsLater_WheRun_ThenReturnEntity()
+    {
+        // Arrange 
+        const string lineText = "2344,01/01/2018 00:00,1002,";
 
         // Act
         var result = await _parser.GetMeterReadingFromLine(lineText);

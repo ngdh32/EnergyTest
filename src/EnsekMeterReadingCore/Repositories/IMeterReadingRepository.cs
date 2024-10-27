@@ -5,5 +5,5 @@ namespace EnsekMeterReadingCore.Repositories;
 
 public interface IMeterReadingRepository : IRepository<MeterReadingEntity>
 {
-    public DateTime? GetAccountLastReadingTime(int accountId);
+    public MeterReadingEntity? GetAccountLastReadingTime(int accountId);
 }

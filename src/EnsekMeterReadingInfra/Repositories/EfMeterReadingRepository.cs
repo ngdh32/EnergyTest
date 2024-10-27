@@ -23,10 +23,10 @@ public class EfMeterReadingRepository : EfBaseRepository, IMeterReadingRepositor
         }
     }
 
-    public DateTime? GetAccountLastReadingTime(int accountId)
+    public MeterReadingEntity? GetAccountLastReadingTime(int accountId)
     {
         var entities = _dbContext.MeterReadings.Where(x => x.AccountId == accountId);
-        return entities?.Any() == true ? entities.Max(x => x.ReadingTime) : null;
+        return entities?.Any() == true ? entities.MaxBy(x => x.ReadingTime) : null;
     }
 
     public async Task<IEnumerable<MeterReadingEntity>> GetAllAsync()

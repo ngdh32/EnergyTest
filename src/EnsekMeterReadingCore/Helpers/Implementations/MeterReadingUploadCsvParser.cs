@@ -41,6 +41,8 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
         {
             return new MeterReadingUploadRowResult("Meter Value is not in the right format");
         }
+
+        var remark = columnCells[3];
         
         var account = await _accountRepository.GetByIdAsync(accountId);
         if (account == null)
@@ -48,8 +50,17 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
             return new MeterReadingUploadRowResult("Account Not Found");
         }
         
-        var accountLastReadingTime = _readingRepository.GetAccountLastReadingTime(account.Id);
-        if (accountLastReadingTime != null && accountLastReadingTime > meterReadingDateTime)
+        var accountLastReading = _readingRepository.GetAccountLastReadingTime(account.Id);
+        if (accountLastReading != null 
+            && accountLastReading.AccountId == account.Id
+            && accountLastReading.ReadingTime == meterReadingDateTime
+            && accountLastReading.ReadingValue == meterReadValue
+            && accountLastReading.Remark == remark)
+        {
+            return new MeterReadingUploadRowResult("Duplicate entry");
+        }
+        
+        if (accountLastReading != null && accountLastReading.ReadingTime > meterReadingDateTime)
         {
             return new MeterReadingUploadRowResult("Account Last Reading Time is larger than meter reading time");
         }
@@ -58,7 +69,7 @@ public class MeterReadingUploadCsvParser : IMeterReadingUploadCsvParser
         {
             AccountId = accountId,
             ReadingTime = meterReadingDateTime,
-            Remark = columnCells[3],
+            Remark = remark,
             ReadingValue = meterReadValue
         });
     }
